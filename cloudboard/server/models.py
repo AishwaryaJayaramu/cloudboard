@@ -22,8 +22,8 @@ class Device(db.Model):
 
 class Clipboard(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    copiedAt = db.Column(db.DateTime)
-    copiedData = db.Column(db.String(100000))
-    isFile = db.Column(db.Boolean, default=False)
-    user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
+    copied_at = db.Column(db.DateTime)
+    copied_data = db.Column(db.String(100000))
+    is_file = db.Column(db.Boolean, default=False)
+    # user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
     device_id = db.Column(db.Integer, db.ForeignKey("device.id"))
