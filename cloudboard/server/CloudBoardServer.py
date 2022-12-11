@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, flash, request, Response
 from flask_login import login_required, current_user
 from .models import User, Device, Clipboard
-from sqlalchemy import select
+from sqlalchemy import select, desc
 import jsonpickle
 import jwt
 import hashlib
@@ -82,15 +82,35 @@ def copy_data():
         is_file   = json_data["is_file"]
         encoded_jwt = hashlib.sha256(jwt_token.encode('utf-8')).hexdigest()
         device = Device.query.filter_by(token_hash=encoded_jwt).first()
-
+        user = device.user
         if device:
-            clipboard = Clipboard(copied_at=timestamp, copied_data = copy_data, is_file = is_file, device_id=device.id)
+            clipboard = Clipboard(copied_at=timestamp, copied_data = copy_data, is_file = is_file, device_id=device.id, user_id=user.id)
             db.session.add(clipboard)
             db.session.commit()
             response = {"message" : "copied successfully", "error": False}
         else:
             response = {"message" : "device not found", "error": True}
 
+    except:
+        response = { "message" : "Unexpected error", 'error' : True }
+    response_pickled = jsonpickle.encode(response)
+    return Response(response=response_pickled, status=200, mimetype="application/json")
+
+@main.route("/paste_data", methods=["GET"])
+def paste_data():
+    r = request
+    try:
+        json_data = jsonpickle.decode(r.data)
+        print(f"Decoded json is {json_data}")
+        jwt_token = json_data["device_id"]
+        encoded_jwt = hashlib.sha256(jwt_token.encode('utf-8')).hexdigest()
+        device = Device.query.filter_by(token_hash=encoded_jwt).first()
+        user = device.user
+        clipb = Clipboard.query.filter_by(device_id = device.id, user_id = user.id).order_by(desc(Clipboard.copied_at))
+        if clipb:
+            response = { "copied_text" : clipb[0].copied_data}
+        else:
+            response = {"copied_text" : ""}
     except:
         response = { "message" : "Unexpected error", 'error' : True }
     response_pickled = jsonpickle.encode(response)

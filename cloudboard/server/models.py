@@ -8,10 +8,10 @@ class User(UserMixin, db.Model):
     email = db.Column(db.String(100), unique=True)
     password = db.Column(db.String(100))
     name = db.Column(db.String(1000))
-    # devices = db.relationship("Device", backref="post")
-    # clipboards = db.relationship("Clipboard", backref="post")
-    devices = db.relationship("Device", back_populates = "user")
-    clipboards = db.relationship("Clipboard", back_populates = "user")
+    devices = db.relationship("Device", backref="user")
+    clipboards = db.relationship("Clipboard", backref="user")
+    # devices = db.relationship("Device", back_populates = "user", cascade="delete")
+    # clipboards = db.relationship("Clipboard", back_populates = "user", cascade="delete")
 
 
 class Device(db.Model):
@@ -20,8 +20,10 @@ class Device(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
     token_hash = db.Column(db.String(1000))
     name = db.Column(db.String(1000))
-    user = db.relationship("User", back_populates = "devices")
-    clipboards = db.relationship("Clipboard", back_populates ="device")
+    # user = db.relationship("User", backref="devices")
+    clipboards = db.relationship("Clipboard", backref=db.backref("device"))
+    # user = db.relationship("User", backref = db.backref("devices", lazy='dynamic'))
+    # clipboards = db.relationship("Clipboard", back_populates ="device",lazy='dynamic',cascade="delete")
 
 class Clipboard(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -30,5 +32,7 @@ class Clipboard(db.Model):
     is_file = db.Column(db.Boolean, default=False)
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
     device_id = db.Column(db.Integer, db.ForeignKey("device.id"))
-    device = db.relationship("Device", back_populates = "clipboards" )
-    user = db.relationship("User", back_populates = "clipboards")
+    # device = db.relationship("Device", backref="clipboards")
+    # user = db.relationship("User", backref="clipboards")
+    # device = db.relationship("Device", back_populates = "clipboards" ,lazy='dynamic')
+    # user = db.relationship("User", back_populates = "clipboards", lazy='dynamic')
