@@ -16,12 +16,33 @@ def index():
 @main.route("/profile")
 @login_required
 def profile():
+    name = current_user.name
+    current_devices = current_user.devices
+    devices={}
+    for device in current_devices:
+        devices[device.name] = {"id":device.id, "token":device.token_hash}
     return render_template(
         "profile.html",
-        name=current_user.name,
-        current_devices=list(map(lambda x: x.name, current_user.devices)),
+        name = name,
+        devices = devices
     )
 
+@main.route("/delete_device", methods=["POST"])
+def delete_device():
+    device_id = request.form.get('delete')
+    if device_id:
+        Device.query.filter_by(id=device_id).delete()
+        db.session.commit()
+    name = current_user.name
+    current_devices = current_user.devices
+    devices={}
+    for device in current_devices:
+        devices[device.name] = {"id":device.id, "token":device.token_hash}
+    return render_template(
+        "profile.html",
+        name=name,
+        devices = devices
+    )
 
 @main.route("/add_device", methods=["POST"])
 @login_required
@@ -35,8 +56,13 @@ def add_device():
         db.session.add(device)
         db.session.commit()
         flash(f"Device {device_name} added. Please copy the token {jwt_token} and store it in a safe place.")
-
+    name = current_user.name
+    current_devices = current_user.devices
+    devices={}
+    for device in current_devices:
+        devices[device.name] = {"id":device.id, "token":device.token_hash}
     return render_template(
         "profile.html", 
-        name=current_user.name
+        name=name,
+        devices = devices
     )
