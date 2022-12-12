@@ -5,8 +5,8 @@ from sqlalchemy import select, desc
 import jsonpickle
 import jwt
 import hashlib
-from datetime import datetime
 import time
+import uuid
 from . import db
 
 main = Blueprint("main", __name__)
@@ -51,7 +51,7 @@ def add_device():
     device_name = request.form.get("device")
     if device_name:
 
-        jwt_token = jwt.encode({"name": device_name}, "secret", algorithm="HS256")
+        jwt_token = jwt.encode({"name": uuid.uuid4().hex}, "secret", algorithm="HS256")
         encoded_jwt = hashlib.sha256(jwt_token.encode("utf-8")).hexdigest()
         device = Device(
             name=device_name, token_hash=encoded_jwt, user_id=current_user.id
@@ -59,7 +59,7 @@ def add_device():
         db.session.add(device)
         db.session.commit()
         flash(
-            f"Device {device_name} added. Please copy the token {jwt_token} and store it in a safe place."
+            f"Device {device_name} added. Please copy the token below and enter it into the .cloudboard_credentials file in your home directory:\n{jwt_token}"
         )
     name = current_user.name
     current_devices = current_user.devices
@@ -74,14 +74,11 @@ def copy_data():
     r = request
     try:
         json_data = jsonpickle.decode(r.data)
-        print(f"Decoded json is {json_data}")
         jwt_token = json_data["device_id"]
         copy_data = json_data["copy_data"]
-        # timestamp = datetime.strptime(json_data["timestamp"], "%m/%d/%y %H:%M:%S")
         timestamp = time.time()
         is_file = json_data["is_file"]
         encoded_jwt = hashlib.sha256(jwt_token.encode("utf-8")).hexdigest()
-        print("hashashas",encoded_jwt)
         device = Device.query.filter_by(token_hash=encoded_jwt).first()
         user = device.user
         if device:
@@ -109,7 +106,6 @@ def paste_data():
     r = request
     try:
         json_data = jsonpickle.decode(r.data)
-        print(f"Decoded json is {json_data}")
         jwt_token = json_data["device_id"]
         encoded_jwt = hashlib.sha256(jwt_token.encode('utf-8')).hexdigest()
         device = Device.query.filter_by(token_hash=encoded_jwt).first()
@@ -139,7 +135,6 @@ def list_clipboards():
         for clipboard in clipboards:
             clipboards_list.append({
                 "id": clipboard.id,
-                # "copied_at": clipboard.copied_at.strftime("%m/%d/%y %H:%M:%S"),
                 "copied_at": clipboard.copied_at,
                 "copied_data": clipboard.copied_data,
                 "is_file": clipboard.is_file,

@@ -1,21 +1,19 @@
-import pyperclip
-import uuid
 import requests
 
 class PasteHandler:
     """
     Handles paste operation.
     """
-    def __init__(self):
-        # self.uid = uuid.uuid4().hex # client_id
-        pass
+    def __init__(self, host, port):
+        with open('~/.cloudboard_credentials', 'r') as f:
+            self.token = f.read().strip()
+        self.endpoint = f"http://{host}:{port}"
 
     def cloud_paste(self, local_copy_timestamp):
-        token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiZGV2aWNlIDEifQ.kKOl0Y5L9H7DjNYr6zAdizhtsReUd50C8WvpYHlobSI"
-        list_clipboards_url = "http://127.0.0.1:5000/list_clipboards"
-        paste_data_url = "http://127.0.0.1:5000/paste_data"
+        list_clipboards_url = f"{self.endpoint}/list_clipboards"
+        paste_data_url = f"{self.endpoint}/paste_data"
         query_data = {
-            "device_id": token
+            "device_id": self.token
         }
         response = requests.get(list_clipboards_url, json=query_data)
         json_response = response.json()
@@ -32,7 +30,3 @@ class PasteHandler:
             json_paste_response = paste_response.json()
         if paste_response and "copied_text" in json_paste_response:
             return(json_paste_response["copied_text"])
-        
-
-    def get_copy_state(self):
-        pass
