@@ -1,4 +1,5 @@
 from threading import Thread
+import os
 from CopyHandler import CopyHandler
 from PasteHandler import PasteHandler
 import pyperclip
@@ -7,8 +8,11 @@ import keyboard
 host = "34.102.116.94"
 port = "5000"
 
-copyhandler = CopyHandler(host, port)
-pastehandler = PasteHandler(host, port)
+with open(f"{os.getenv('HOME')}/.cloudboard_credentials", 'r') as f:
+    device_auth_token = f.read().strip()
+
+copyhandler = CopyHandler(host, port, device_auth_token)
+pastehandler = PasteHandler(host, port, device_auth_token)
 
 class CopyDaemon(Thread):
     def run(self):

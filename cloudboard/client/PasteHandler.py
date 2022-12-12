@@ -4,9 +4,8 @@ class PasteHandler:
     """
     Handles paste operation.
     """
-    def __init__(self, host, port):
-        with open('~/.cloudboard_credentials', 'r') as f:
-            self.token = f.read().strip()
+    def __init__(self, host, port, token):
+        self.token = token
         self.endpoint = f"http://{host}:{port}"
 
     def cloud_paste(self, local_copy_timestamp):

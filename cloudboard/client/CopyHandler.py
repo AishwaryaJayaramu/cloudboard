@@ -9,15 +9,14 @@ class CopyHandler:
     Handles copy operation
     """
 
-    def __init__(self, host, port):
+    def __init__(self, host, port, token):
         """
         1. Maintain a unique ID for each copy operation
         """
         self.copy_uid = None
         self.data = None
         self.timestamp = float('-inf')
-        with open('~/.cloudboard_credentials', 'r') as f:
-            self.token = f.read().strip()
+        self.token = token
         self.endpoint = f"http://{host}:{port}"
 
     def update_local_state(self):
