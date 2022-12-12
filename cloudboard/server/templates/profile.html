@@ -1,41 +1,72 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h1 class="title">
-  Welcome, {{ name }}! <br>
-  You have {{ devices|length}} registered devices:
-  {% if devices|length >0 %}
-    <table border = 2>
-      <th>Device Name</th>
-      <th>Action</th>
-      {% for device_name, device_details in devices.items() %}
-        <tr>
-            <td> {{ device_name }} </td>
-            <form method="POST" action="/delete_device">
-                <td><button class="button is-block is-info is-large is-fullwidth" type="submit" name="delete" value="{{ device_details.id }}"> Delete</button></td>
-            </form>
+<style>
+  .styled-table {
+    border-collapse: collapse;
+    margin: 25px 0;
+    font-size: 0.9em;
+    min-width: 400px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+}
+.styled-table tr {
+    background-color: #aaf1e3;
+    color: #020000;
+    text-align: left;
+}
+.styled-table th,
+.styled-table td {
+    padding: 12px 15px;
+}
+.styled-table tr {
+    border-bottom: 1px solid #dddddd;
+}
 
-        </tr>
-      {% endfor %}
-    </table>
-  {% endif %}
-</h1>
+.styled-table tr:nth-of-type(even) {
+    background-color: #f3f3f3;
+}
 
-{% with messages = get_flashed_messages() %}
-{% if messages %}
-    <div class="notification is-info">
-        {{ messages[0] }}
-    </div>
-{% endif %}
-{% endwith %}
+.styled-table tr:last-of-type {
+    border-bottom: 2px solid #009879;
+}
+</style>
+<body style="font-family: Monaco">
+  <h1 class="title">
+    Welcome, {{ name }}! <br>
+    You have {{ devices|length}} registered devices
+    {% if devices|length >0 %}
+      <table border = 2 class = "styled-table">
+        <th>Device Name</th>
+        <th>Action</th>
+        {% for device_name, device_details in devices.items() %}
+          <tr>
+              <td> {{ device_name }} </td>
+              <form method="POST" action="/delete_device">
+                  <td><button class="button is-block is-info is-large is-fullwidth" type="submit" name="delete" value="{{ device_details.id }}"> Delete</button></td>
+              </form>
 
-<form method="POST" action="/add_device">
-  <h2> Add Device </h2>
-  <div class="field">
-      <div class="control">
-          <input class="input is-large" type="text" name="device" placeholder="Device name" autofocus="">
+          </tr>
+        {% endfor %}
+      </table>
+    {% endif %}
+  </h1>
+
+  {% with messages = get_flashed_messages() %}
+  {% if messages %}
+      <div class="notification is-info">
+          {{ messages[0] }}
       </div>
-  </div>
-  <button class="button is-block is-info is-large is-fullwidth">Add</button>
-</form>
+  {% endif %}
+  {% endwith %}
+
+  <form method="POST" action="/add_device">
+    <h2> Add a new Device </h2>
+    <div class="field">
+        <div class="control">
+            <input class="input is-large" type="text" name="device" placeholder="Device name" autofocus="">
+        </div>
+    </div>
+    <button class="button is-block is-info is-large is-fullwidth">Add</button>
+  </form>
+</body>
 {% endblock %}

@@ -25,7 +25,7 @@ class CopyHandler:
         self.timestamp = time.time()
 
     def update_remote_state(self):
-        token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJuYW1lIjoiYXNkIn0.QBG24x1D26mjFpOCLxOit72m8jt67HYI9dBmpBuBepc"
+        token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiZGV2aWNlIDEifQ.kKOl0Y5L9H7DjNYr6zAdizhtsReUd50C8WvpYHlobSI"
         list_clipboards_url = "http://127.0.0.1:5000/list_clipboards"
         copy_data_url = "http://127.0.0.1:5000/copy_data"
         query_data = {

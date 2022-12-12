@@ -11,7 +11,6 @@ class PasteHandler:
         pass
 
     def cloud_paste(self, local_copy_timestamp):
-        print("I am here")
         token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiZGV2aWNlIDEifQ.kKOl0Y5L9H7DjNYr6zAdizhtsReUd50C8WvpYHlobSI"
         list_clipboards_url = "http://127.0.0.1:5000/list_clipboards"
         paste_data_url = "http://127.0.0.1:5000/paste_data"

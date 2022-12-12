@@ -4,7 +4,7 @@ from PasteHandler import PasteHandler
 import pyperclip
 import keyboard
 
-copyhandler = CopyHandler()
+copyhandler = CopyHandler(123)
 pastehandler = PasteHandler()
 
 class CopyDaemon(Thread):
@@ -17,7 +17,7 @@ class CopyDaemon(Thread):
 
 class PasteDaemon(Thread):
     def run(self):
-        keyboard.add_hotkey('ctrl+v', lambda: keyboard.write(pastehandler.cloud_paste(copyhandler.timestamp)))
+        keyboard.add_hotkey('esc', lambda: keyboard.write(pastehandler.cloud_paste(copyhandler.timestamp)))
         keyboard.wait()
 
 if __name__=="__main__":
