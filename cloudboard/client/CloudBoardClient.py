@@ -4,11 +4,11 @@ from PasteHandler import PasteHandler
 import pyperclip
 import keyboard
 
-copyhandler = CopyHandler(None)
-pastehandler = PasteHandler()
-
 host = "34.102.116.94"
 port = "5000"
+
+copyhandler = CopyHandler(host, port)
+pastehandler = PasteHandler(host, port)
 
 class CopyDaemon(Thread):
     def run(self):
@@ -24,8 +24,8 @@ class PasteDaemon(Thread):
         keyboard.wait()
 
 if __name__=="__main__":
-    copydaemon = CopyDaemon(host, port)
-    pastedaemon = PasteDaemon(host, port)
+    copydaemon = CopyDaemon()
+    pastedaemon = PasteDaemon()
 
     copydaemon.start()
     pastedaemon.start()
