@@ -16,13 +16,13 @@ class CopyHandler:
         """
         self.copy_uid = None
         self.data = None
-        self.timestamp = datetime.datetime.now().strftime("%m/%d/%y %H:%M:%S")
+        self.timestamp = float('-inf')
         pass
 
     def update_local_state(self):
         self.uid = uuid.uuid4().hex  # COPY id
         self.data = pyperclip.paste()
-        self.timestamp = float("-inf")
+        self.timestamp = time.time()
 
     def update_remote_state(self):
         token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJuYW1lIjoiYXNkIn0.QBG24x1D26mjFpOCLxOit72m8jt67HYI9dBmpBuBepc"

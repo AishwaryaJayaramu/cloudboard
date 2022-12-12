@@ -6,6 +6,7 @@ import jsonpickle
 import jwt
 import hashlib
 from datetime import datetime
+import time
 from . import db
 
 main = Blueprint("main", __name__)
@@ -76,9 +77,11 @@ def copy_data():
         print(f"Decoded json is {json_data}")
         jwt_token = json_data["device_id"]
         copy_data = json_data["copy_data"]
-        timestamp = datetime.strptime(json_data["timestamp"], "%m/%d/%y %H:%M:%S")
+        # timestamp = datetime.strptime(json_data["timestamp"], "%m/%d/%y %H:%M:%S")
+        timestamp = time.time()
         is_file = json_data["is_file"]
         encoded_jwt = hashlib.sha256(jwt_token.encode("utf-8")).hexdigest()
+        print("hashashas",encoded_jwt)
         device = Device.query.filter_by(token_hash=encoded_jwt).first()
         user = device.user
         if device:
@@ -136,7 +139,8 @@ def list_clipboards():
         for clipboard in clipboards:
             clipboards_list.append({
                 "id": clipboard.id,
-                "copied_at": clipboard.copied_at.strftime("%m/%d/%y %H:%M:%S"),
+                # "copied_at": clipboard.copied_at.strftime("%m/%d/%y %H:%M:%S"),
+                "copied_at": clipboard.copied_at,
                 "copied_data": clipboard.copied_data,
                 "is_file": clipboard.is_file,
             })
