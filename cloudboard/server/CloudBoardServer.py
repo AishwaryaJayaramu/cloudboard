@@ -110,7 +110,7 @@ def paste_data():
         encoded_jwt = hashlib.sha256(jwt_token.encode('utf-8')).hexdigest()
         device = Device.query.filter_by(token_hash=encoded_jwt).first()
         user = device.user
-        clipb = Clipboard.query.filter_by(device_id = device.id, user_id = user.id).order_by(desc(Clipboard.copied_at))
+        clipb = Clipboard.query.filter_by(user_id = user.id).order_by(desc(Clipboard.copied_at))
         if clipb:
             response = { "copied_text" : clipb[0].copied_data}
         else:
