@@ -31,9 +31,12 @@ def profile():
     )
 
 @main.route("/delete_device", methods=["POST"])
+@login_required
 def delete_device():
     device_id = request.form.get('delete')
     if device_id:
+        Clipboard.query.filter_by(device_id = device_id, user_id = current_user.id).delete()
+        # if clipb:
         Device.query.filter_by(id=device_id).delete()
         db.session.commit()
     name = current_user.name
