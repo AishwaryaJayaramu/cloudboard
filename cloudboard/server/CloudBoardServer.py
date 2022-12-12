@@ -87,6 +87,7 @@ def copy_data():
                 copied_data=copy_data,
                 is_file=is_file,
                 device_id=device.id,
+                user_id=user.id
             )
             db.session.add(clipboard)
             db.session.commit()
