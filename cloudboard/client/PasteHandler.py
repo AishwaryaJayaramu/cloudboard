@@ -1,27 +1,31 @@
-import pyperclip
-import uuid
+import requests
 
 class PasteHandler:
     """
     Handles paste operation.
     """
-    def __init__(self):
-        self.uid = uuid.uuid4().hex # client_id
-        pass
+    def __init__(self, host, port, token):
+        self.token = token
+        self.endpoint = f"http://{host}:{port}"
 
-    def cloud_paste(self):
-        """
-        Executes the following steps:
-            1. Check timestamp of latest local COPY operation
-            2. Fetch the timestamp of latest COPY on the server
-                - if local COPY is the newest COPY:
-                    + paste from local clipboard
-                - else:
-                    + fetch the latest COPY data from the server
-                    + update the local clipboard with the data
-                    + update the local timestamp
-        """
-        pass
-
-    def get_copy_state(self):
-        pass
+    def cloud_paste(self, local_copy_timestamp):
+        list_clipboards_url = f"{self.endpoint}/list_clipboards"
+        paste_data_url = f"{self.endpoint}/paste_data"
+        query_data = {
+            "device_id": self.token
+        }
+        response = requests.get(list_clipboards_url, json=query_data)
+        json_response = response.json()
+        paste_response = None
+        if response.status_code == 200:
+            if len(json_response["clipboards"]) > 0:
+                cld_timestamp = response.json()["clipboards"][0]["copied_at"]
+                if cld_timestamp >= local_copy_timestamp:
+                    paste_response = requests.get(paste_data_url, json=query_data)
+                else:
+                    pass
+            else:
+                paste_response = requests.get(paste_data_url, json=query_data)
+            json_paste_response = paste_response.json()
+        if paste_response and "copied_text" in json_paste_response:
+            return(json_paste_response["copied_text"])
